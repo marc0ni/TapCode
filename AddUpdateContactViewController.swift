@@ -18,12 +18,10 @@ import UIKit
 import Contacts
 
 class AddUpdateContactViewController: UIViewController {
-    
     @IBOutlet weak var txtFirstName: UITextField!
     @IBOutlet weak var txtLastName: UITextField!
     @IBOutlet weak var txtPhoneNo: UITextField!
-    @IBOutlet weak var txtEmail: UITextField!
-    
+   
     var updateContact = CNContact()
     var isUpdate: Bool = false
     
@@ -48,13 +46,6 @@ class AddUpdateContactViewController: UIViewController {
                 break
             }
         }
-        
-        for emailAddress in updateContact.emailAddresses {
-            if emailAddress.label == CNLabelHome {
-                txtEmail.text = emailAddress.value as? String
-                break
-            }
-        }
     }
     
     func displayAlertMessage(message: String, isAction: Bool) {
@@ -73,8 +64,7 @@ class AddUpdateContactViewController: UIViewController {
     }
     
     // MARK: - Action Methods
-    @IBAction func btnAddUpdateContactClicked(sender: AnyObject) {
-        
+    @IBAction func edit(sender: AnyObject) {
         var newContact = CNMutableContact()
         
         if isUpdate == true {
@@ -92,15 +82,6 @@ class AddUpdateContactViewController: UIViewController {
             newContact.phoneNumbers.append(phoneNo)
         } else {
             newContact.phoneNumbers = [phoneNo]
-        }
-        
-        //Set Email
-        let homeEmail = CNLabeledValue(label: CNLabelHome, value: txtEmail.text!)
-        
-        if isUpdate == true {
-            newContact.emailAddresses.append(homeEmail)
-        } else {
-            newContact.emailAddresses = [homeEmail]
         }
         
         var message: String = ""
@@ -131,3 +112,5 @@ class AddUpdateContactViewController: UIViewController {
         }
     }
 }
+
+   

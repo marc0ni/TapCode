@@ -9,7 +9,8 @@ import UIKit
 import Contacts
 import ContactsUI
 
-class ContactsViewController: UIViewController, CNContactPickerDelegate {
+
+class ContactsTableViewController: UIViewController, CNContactPickerDelegate {
     
     var contactStore = CNContactStore()
     var updateContact = CNContact()
@@ -30,10 +31,6 @@ class ContactsViewController: UIViewController, CNContactPickerDelegate {
     }
     
     // MARK: - Action Methods
-    @IBAction func btnViewAllContactsClicked(sender: AnyObject) {
-        let contactPickerViewController = CNContactPickerViewController()
-        presentViewController(contactPickerViewController, animated: true, completion: nil)
-    }
     
     @IBAction func btnUpdateContactClicked(sender: AnyObject) {
         let contactPickerViewController = CNContactPickerViewController()
