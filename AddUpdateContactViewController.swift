@@ -6,111 +6,69 @@
 //  Copyright © 2015 Mark Lindamood. All rights reserved.
 //
 
-//
-//  AddUpdateContactViewController.swift
-//  ContactsFrameworkSwift
-//
-//  Created by TheAppGuruz on 25/11/15.
-//  Copyright © 2015 TheAppGuruz. All rights reserved.
-//
 
 import UIKit
 import Contacts
+import ContactsUI
 
-class AddUpdateContactViewController: UIViewController {
-    @IBOutlet weak var txtFirstName: UITextField!
-    @IBOutlet weak var txtLastName: UITextField!
-    @IBOutlet weak var txtPhoneNo: UITextField!
-   
+class AddUpdateViewController: UIViewController, CNContactPickerDelegate, CNContactViewControllerDelegate {
+    
+    var contactStore = CNContactStore()
     var updateContact = CNContact()
-    var isUpdate: Bool = false
     
     // MARK: - View LifeCycle Methods
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: nil, style: UIBarButtonItemStyle.Done, target: self, action: nil)
         
-        if isUpdate == true {
-            self.navigationItem.rightBarButtonItem?.title = "Update"
-            displayContactData()
-        }
     }
     
-    // MARK: - Display Contact Data Methods
-    func displayContactData() {
-        txtFirstName.text = updateContact.givenName
-        txtLastName.text = updateContact.familyName
+    //MARK: Create a new person
+    // Called when users tap "Create New Contact" in the application. Allows users to create a new contact.
+    private func showNewContactViewController() {
+        let npvc = CNContactViewController(forNewContact: nil)
+        npvc.delegate = self
         
-        for phoneNo in updateContact.phoneNumbers {
-            if phoneNo.label == CNLabelPhoneNumberMobile {
-                txtPhoneNo.text = (phoneNo.value as! CNPhoneNumber).stringValue
-                break
-            }
-        }
+        //npvc.contactStore = self.store //seems to work without setting this.
+        let navigation = UINavigationController(rootViewController: npvc)
+        self.presentViewController(navigation, animated: true, completion: nil)
     }
     
-    func displayAlertMessage(message: String, isAction: Bool) {
-        let alertController = UIAlertController(title: "Contacts", message: message, preferredStyle: UIAlertControllerStyle.Alert)
-        
-        let dismissAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default) { (action) -> Void in
-            if isAction == true {
-                self.navigationController?.popViewControllerAnimated(true)
-                return
-            }
-        }
-        
-        alertController.addAction(dismissAction)
-        
-        self.presentViewController(alertController, animated: true, completion: nil)
-    }
-    
-    // MARK: - Action Methods
-    @IBAction func edit(sender: AnyObject) {
-        var newContact = CNMutableContact()
-        
-        if isUpdate == true {
-            newContact = updateContact.mutableCopy() as! CNMutableContact
-        }
-        
-        //Set Name
-        newContact.givenName = txtFirstName.text!
-        newContact.familyName = txtLastName.text!
-        
-        //Set Phone No
-        let phoneNo = CNLabeledValue(label:CNLabelPhoneNumberMobile, value:CNPhoneNumber(stringValue:txtPhoneNo.text!))
-        
-        if isUpdate == true {
-            newContact.phoneNumbers.append(phoneNo)
-        } else {
-            newContact.phoneNumbers = [phoneNo]
-        }
-        
-        var message: String = ""
-        
+    //MARK: Display and edit a person
+    // Called when users tap "Display and Edit Contact" in the application. Searches for a contact named "Appleseed" in
+    // in the address book. Displays and allows editing of all information associated with that contact if
+    // the search is successful. Shows an alert, otherwise.
+    private func showContactViewController(name: String) {
+        // Search for the person named "Appleseed" in the Contacts
+        //let name = contact.familyName
+        let predicate: NSPredicate = CNContact.predicateForContactsMatchingName(name)
+        let descriptor = CNContactViewController.descriptorForRequiredKeys()
+        let contacts: [CNContact]
         do {
-            let saveRequest = CNSaveRequest()
-            if isUpdate == true {
-                saveRequest.updateContact(newContact)
-                message = "Contact Updated Successfully"
-            } else {
-                saveRequest.addContact(newContact, toContainerWithIdentifier: nil)
-                message = "Contact Added Successfully"
-            }
-            
-            let contactStore = CNContactStore()
-            try contactStore.executeSaveRequest(saveRequest)
-            
-            displayAlertMessage(message, isAction: true)
+            contacts = try contactStore.unifiedContactsMatchingPredicate(predicate, keysToFetch: [descriptor])
+        } catch {
+            contacts = []
         }
-        catch {
-            if isUpdate == true {
-                message = "Unable to Update the Contact."
-            } else {
-                message = "Unable to Add the New Contact."
-            }
-            
-            displayAlertMessage(message, isAction: false)
+        // Display information  found in the address book
+        if !contacts.isEmpty {
+            let contact = contacts[0]
+            let cvc = CNContactViewController(forContact: contact)
+            cvc.delegate = self
+            // Allow users to edit the person’s information
+            cvc.allowsEditing = true
+            //cvc.contactStore = self.store //seems to work without setting this.
+            self.navigationController?.pushViewController(cvc, animated: true)
+        } else {
+            // Show an alert if "Appleseed" is not in Contacts
+            let alert = UIAlertController(title: "Error",
+                message: "Could not find \(name) in the Contacts application.",
+                preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: nil))
+            self.presentViewController(alert, animated: true, completion: nil)
         }
     }
+
 }
+
 
    

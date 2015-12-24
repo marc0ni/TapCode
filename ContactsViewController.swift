@@ -5,12 +5,13 @@
 //  Created by Mark Lindamood on 12/11/15.
 //  Copyright © 2015 Mark Lindamood. All rights reserved.
 //
+
+
 import UIKit
 import Contacts
 import ContactsUI
 
-
-class ContactsTableViewController: UIViewController, CNContactPickerDelegate {
+class ContactsViewController: UIViewController, CNContactPickerDelegate, CNContactViewControllerDelegate {
     
     var contactStore = CNContactStore()
     var updateContact = CNContact()
@@ -18,56 +19,69 @@ class ContactsTableViewController: UIViewController, CNContactPickerDelegate {
     // MARK: - View LifeCycle Methods
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: nil, style: UIBarButtonItemStyle.Done, target: self, action: nil)
         
-        askForContactAccess()
+        requestContactsAccess()
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if segue.identifier == "OpenUpdateContactView" {
-            let addUpdateContactViewController = segue.destinationViewController as! AddUpdateContactViewController
-            addUpdateContactViewController.updateContact = updateContact
-            addUpdateContactViewController.isUpdate = true
-        }
-    }
-    
-    // MARK: - Action Methods
-    
-    @IBAction func btnUpdateContactClicked(sender: AnyObject) {
-        let contactPickerViewController = CNContactPickerViewController()
-        
-        contactPickerViewController.delegate = self
-        
-        presentViewController(contactPickerViewController, animated: true, completion: nil)
-    }
     
     // MARK: - Contact Access Permission Method
-    func askForContactAccess() {
-        let authorizationStatus = CNContactStore.authorizationStatusForEntityType(CNEntityType.Contacts)
-        
-        switch authorizationStatus {
-        case .Denied, .NotDetermined:
-            self.contactStore.requestAccessForEntityType(CNEntityType.Contacts, completionHandler: { (access, accessError) -> Void in
-                if !access {
-                    if authorizationStatus == CNAuthorizationStatus.Denied {
-                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                            let message = "\(accessError!.localizedDescription)\n\nPlease allow the app to access your contacts through the Settings."
-                            let alertController = UIAlertController(title: "Contacts", message: message, preferredStyle: UIAlertControllerStyle.Alert)
-                            
-                            let dismissAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default) { (action) -> Void in
-                            }
-                            
-                            alertController.addAction(dismissAction)
-                            
-                            self.presentViewController(alertController, animated: true, completion: nil)
-                        })
-                    }
-                }
-            })
-            break
-        default:
-            break
+    private func checkContactsAccess() {
+        switch CNContactStore.authorizationStatusForEntityType(.Contacts) {
+            // Update our UI if the user has granted access to their Contacts
+        case .Authorized:
+            self.accessGrantedForContacts()
+            
+            // Prompt the user for access to Contacts if there is no definitive answer
+        case .NotDetermined :
+            self.requestContactsAccess()
+            
+            // Display a message if the user has denied or restricted access to Contacts
+        case .Denied,
+        .Restricted:
+            let alert = UIAlertController(title: "Privacy Warning!",
+                message: "Permission was not granted for Contacts.",
+                preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
+            self.presentViewController(alert, animated: true, completion: nil)
         }
     }
+    
+    private func requestContactsAccess() {
+        
+        contactStore.requestAccessForEntityType(.Contacts) {granted, error in
+            if granted {
+                dispatch_async(dispatch_get_main_queue()) {
+                    self.accessGrantedForContacts()
+                    return
+                }
+            }
+        }
+    }
+    
+    
+    
+    // This method is called when the user has granted access to their address book data.
+    private func accessGrantedForContacts() {
+        self.showContactPickerController()
+    }
+    
+    
+    //MARK: Show all contacts
+    // Called when users tap "Display Picker" in the application. Displays a list of contacts and allows users to select a contact from that list.
+    // The application only shows the phone, email, and birthdate information of the selected contact.
+    func showContactPickerController() {
+        let picker = CNContactPickerViewController()
+        picker.delegate = self
+        
+        // Display only a person's phone, email, and birthdate
+        let displayedItems = [CNContactPhoneNumbersKey, CNContactEmailAddressesKey, CNContactBirthdayKey]
+        picker.displayedPropertyKeys = displayedItems
+        
+        // Show the picker
+        self.presentViewController(picker, animated: true, completion: nil)
+    }
+    
     
     // MARK: - Contact Select Method
     func contactPicker(picker: CNContactPickerViewController, didSelectContact contact: CNContact) {

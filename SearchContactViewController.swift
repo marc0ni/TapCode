@@ -10,6 +10,7 @@ import UIKit
 import Contacts
 import ContactsUI
 
+@IBOutlet weak var fullNameLabel: UILabel!
 class ContactCell: UITableViewCell {
     @IBOutlet weak var fullNameLabel: UILabel!
     
