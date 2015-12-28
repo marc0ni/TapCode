@@ -19,7 +19,7 @@ class ContactsViewController: UIViewController, CNContactPickerDelegate, CNConta
     // MARK: - View LifeCycle Methods
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: nil, style: UIBarButtonItemStyle.Done, target: self, action: nil)
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Add", style: UIBarButtonItemStyle.Plain, target: self, action: nil)
         
         requestContactsAccess()
     }
@@ -86,7 +86,7 @@ class ContactsViewController: UIViewController, CNContactPickerDelegate, CNConta
     // MARK: - Contact Select Method
     func contactPicker(picker: CNContactPickerViewController, didSelectContact contact: CNContact) {
         updateContact = contact
-        self.dismissViewControllerAnimated(false, completion: nil)
+        self.dismissViewControllerAnimated(true, completion: nil)
         performSegueWithIdentifier("OpenUpdateContactView", sender: nil)
     }
 }

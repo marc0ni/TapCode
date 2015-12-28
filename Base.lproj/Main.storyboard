@@ -26,7 +26,7 @@
             </objects>
             <point key="canvasLocation" x="483" y="63.75"/>
         </scene>
-        <!--Contacts View Controller-->
+        <!--TapCode-->
         <scene sceneID="cfl-8a-Dp8">
             <objects>
                 <viewController id="xJn-KW-JaE" customClass="ContactsViewController" customModule="TapCode" sceneMemberID="viewController">
@@ -38,31 +38,65 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <navigationItem key="navigationItem" id="e69-KK-TVe"/>
+                    <navigationItem key="navigationItem" title="TapCode" id="e69-KK-TVe"/>
                     <connections>
-                        <segue destination="ByG-4q-SJ5" kind="show" identifier="OpenUpdateContactView" action="showDetailViewController:sender:" id="T51-TG-dES"/>
+                        <segue destination="OIm-7a-omH" kind="show" identifier="OpenUpdateContactView" id="31m-3E-Wcf"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="53G-ak-B6s" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1435.5" y="63.75"/>
         </scene>
-        <!--Add Update View Controller-->
-        <scene sceneID="igL-vQ-24H">
+        <!--Add/Update-->
+        <scene sceneID="fWX-Cr-78V">
             <objects>
-                <viewController id="ByG-4q-SJ5" customClass="AddUpdateViewController" customModule="TapCode" sceneMemberID="viewController">
+                <viewController id="OIm-7a-omH" customClass="AddUpdateViewController" customModule="TapCode" sceneMemberID="viewController">
                     <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="hwO-0P-nmX"/>
-                        <viewControllerLayoutGuide type="bottom" id="N5r-kI-4TF"/>
+                        <viewControllerLayoutGuide type="top" id="lfk-4k-Bhg"/>
+                        <viewControllerLayoutGuide type="bottom" id="CLS-Kg-K4u"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="Vtl-bC-AmJ">
+                    <view key="view" contentMode="scaleToFill" id="kfl-9Z-KQx">
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="53s-xT-Ecb">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                                <items>
+                                    <barButtonItem title="Item" id="l28-ry-8wz">
+                                        <color key="tintColor" red="1" green="0.78039215689999997" blue="0.43529411759999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </barButtonItem>
+                                    <barButtonItem systemItem="edit" id="Dod-Fi-93v"/>
+                                </items>
+                                <color key="barTintColor" red="1" green="0.78039215689999997" blue="0.43529411759999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
+                                    <rect key="frame" x="0.0" y="692" width="414" height="44"/>
+                                </variation>
+                            </toolbar>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <variation key="default">
+                            <mask key="subviews">
+                                <exclude reference="53s-xT-Ecb"/>
+                            </mask>
+                        </variation>
+                        <variation key="heightClass=regular-widthClass=compact">
+                            <mask key="subviews">
+                                <include reference="53s-xT-Ecb"/>
+                            </mask>
+                        </variation>
                     </view>
+                    <navigationItem key="navigationItem" title="Add/Update" id="Zrc-1W-lRl">
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="GtO-t8-Rad">
+                            <connections>
+                                <segue destination="vUR-Kf-TaR" kind="custom" customClass="DismissSegue" id="nfi-2u-6HT"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" systemItem="save" id="L0s-aQ-Xlx"/>
+                    </navigationItem>
+                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina55"/>
                 </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="hJz-GC-64r" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="xbQ-MN-5VQ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2416.5" y="63.75"/>
+            <point key="canvasLocation" x="2632.5" y="63.75"/>
         </scene>
     </scenes>
 </document>
